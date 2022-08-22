@@ -32,6 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Arduino.h>
 #include "HT1621.h"
 
+// uncomment this line to see debug info on the serial monitor 9600bps
+//#define DEBUG_OUTPUT
+
 HT1621::HT1621(){
 	_buffer[0] = 0x00;
 	_buffer[1] = 0x00;
@@ -198,22 +201,27 @@ void HT1621::print(long num, const char* flags, int precision){
 
 	char localbuffer[7]; //buffer to work within the function
 	snprintf(localbuffer, 7, flags, num); // convert the decimal into string
+#ifdef DEBUG_OUTPUT
 	Serial.begin(9600);
 	Serial.print(localbuffer);
 	Serial.print("\t");
-
+#endif
 	// horrible handling but should get us working. needs refactor in next major
 	if (precision > 0 && (num) < pow(10, precision)) {
 		// we remove extra leading zeros
 		for (int i = 0; i < (5 - precision); i++) {
+#ifdef DEBUG_OUTPUT
 			Serial.print(localbuffer[1]);
+#endif
 			if(localbuffer[i+1] == '0' && localbuffer[i] != '-'){ // we remove only if there is another zero ahead AND if it's not a minus sign
 				localbuffer[i] = ' ';
 			}
 			else{
 				break;
 			}
+#ifdef DEBUG_OUTPUT
 			Serial.println();
+#endif
 	}
 	}
 
